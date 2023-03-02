@@ -1,7 +1,7 @@
 using UnityEngine;
 
 
-public class FireBullet : MonoBehaviour
+public class Firearm : MonoBehaviour
 {
     [SerializeField] private GameObject bullet;
     [SerializeField] private GameObject barrel;
@@ -9,6 +9,8 @@ public class FireBullet : MonoBehaviour
     [SerializeField] private bool FullAuto;
     [SerializeField] private int MagSize;
     [SerializeField] private float FireRate;
+    [SerializeField] protected float ShootingForce;
+    [SerializeField] protected float Damage;
 
     private bool TriggerPressed = false;
     private bool CanShootAgain = false;  //used to manage rate of fire
@@ -40,16 +42,21 @@ public class FireBullet : MonoBehaviour
     public void TriggerPress() //This method is called by the XR Grab Interactable script (Specifically by the Activated event)
     {
         TriggerPressed = true;
+        ApplyRecoil(true);
     }
 
     public void Triggerrelease() //This method is called by the XR Grab Interactable script
     {
         TriggerPressed = false;
+        ApplyRecoil(false);
     }
 
     private void Shoot() 
     {
-        if (!CanShootAgain) { return; }
+        if (!CanShootAgain) 
+        {
+            return; 
+        }
         TimePassedSinceLastBullet = 0f;
         GameObject newBullet = Instantiate(bullet);
         newBullet.transform.position = barrel.transform.position;
@@ -58,5 +65,13 @@ public class FireBullet : MonoBehaviour
         if (!FullAuto ) { TriggerPressed = false; } // If gun is not FullAuto, Release trigger after shooting once
     }
 
+    private void ApplyRecoil(bool slideForward)
+    {
+        GetComponent<Animator>().SetBool("Shoot", slideForward);
+    }
+    private float GetDamage()
+    {
+        return Damage;
+    }
 
 }
