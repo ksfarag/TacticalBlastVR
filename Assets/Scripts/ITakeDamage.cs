@@ -2,5 +2,5 @@ using UnityEngine;
 
 public interface ITakeDamage
 {
-    void TakeDamage(Firearm firearm, Vector3 pointOfImpact);
+    void TakeDamage(Bullet bullet, Vector3 pointOfImpact);
 }

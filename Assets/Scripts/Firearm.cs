@@ -6,11 +6,11 @@ public class Firearm : MonoBehaviour
     [SerializeField] private GameObject bullet;
     [SerializeField] private GameObject barrel;
     [SerializeField] private float velocity;
-    [SerializeField] private bool FullAuto;
-    [SerializeField] private int MagSize;
-    [SerializeField] private float FireRate;
-    [SerializeField] protected float ShootingForce;
-    [SerializeField] protected float Damage;
+    [SerializeField] private bool fullAuto;
+    [SerializeField] private int magSize;
+    [SerializeField] private float fireRate;
+    [SerializeField] protected float hittingForce;
+    [SerializeField] protected float damage;
 
     private bool TriggerPressed = false;
     private bool CanShootAgain = false;  //used to manage rate of fire
@@ -29,7 +29,7 @@ public class Firearm : MonoBehaviour
         }
         TimePassedSinceLastBullet += Time.deltaTime;
 
-        if (TimePassedSinceLastBullet >= 1/FireRate)
+        if (TimePassedSinceLastBullet >= 1/fireRate)
         {
             CanShootAgain = true;
         }
@@ -60,18 +60,23 @@ public class Firearm : MonoBehaviour
         TimePassedSinceLastBullet = 0f;
         GameObject newBullet = Instantiate(bullet);
         newBullet.transform.position = barrel.transform.position;
+        newBullet.transform.forward = barrel.transform.forward;
         newBullet.GetComponent<Rigidbody>().velocity = barrel.transform.forward* velocity;
+        newBullet.GetComponent<Bullet>().SetForce(hittingForce);
+        newBullet.GetComponent<Bullet>().SetDamage(damage);
         Destroy(newBullet, 5);
-        if (!FullAuto ) { TriggerPressed = false; } // If gun is not FullAuto, Release trigger after shooting once
+        if (!fullAuto ) { TriggerPressed = false; } // If gun is not FullAuto, Release trigger after shooting once
     }
 
     private void ApplyRecoil(bool slideForward)
     {
         GetComponent<Animator>().SetBool("Shoot", slideForward);
     }
-    private float GetDamage()
+
+
+    public Vector3 GetProjectileDirectrion()
     {
-        return Damage;
+        return barrel.transform.forward;
     }
 
 }
